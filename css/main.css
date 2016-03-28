@@ -101,15 +101,6 @@ body {
   transition: right ease-in 0.5s;
 }
 
-.mainView.contract {
-  position: fixed;
-
-  left: 0;
-  right: 300px;
-  bottom: 0
-  top: 0;
-}
-
 .cover .pic,
 .cover,
 .playing .controls
@@ -431,12 +422,12 @@ Collection area
 
 .collection.open .collectionButton {
   opacity: 1;
-  background-color: #000;
+  background-color: rgba(0,0,0,0.8);
 }
 
 .collection {
   position: fixed;
-  background-color: #000;
+  background-color: rgba(0,0,0,0.8);
 
   top: 0;
   right: -300px;

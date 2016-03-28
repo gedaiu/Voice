@@ -46,23 +46,40 @@ var walk = function(dir, done) {
 function expandMp3(file, callback) {
   try {
     id3({ file: file, type: id3.OPEN_LOCAL }, function(err, tags) {
-
       if(!tags) {
         tags = {};
       }
 
-      callback(null, {
+      var result = {
         type: "file",
 
         title: tags.title || "unknown",
         artist: tags.artist || "unknown",
         album: tags.album || "unknown",
         year: tags.year || "unknown",
-        cover: "Filastine--Looted.jpg",
+        cover: "",
         duration: "00:00",
 
         path: file
-      });
+      };
+
+      if(tags.v2.image) {
+        console.log(tags.v2.image.data);
+
+        var buffer = tags.v2.image.data;
+        var filename = tags.title + "-" + tags.artist + ".jpg";
+
+        fs.writeFile("./cover/" + filename, tags.v2.image, function(err) {
+            if(err) {
+                callback(null, result);
+            } else {
+                result.cover = filename;
+                callback(null, result);
+            }
+        });
+      } else {
+        callback(null, result);
+      }
     });
   } catch(err) {
 

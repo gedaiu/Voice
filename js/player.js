@@ -12,6 +12,7 @@ MusicPlayer.Player.play = function(data) {
 
   if(data && data.path) {
     this.audio = new Audio(data.path);
+    this.audio.volume = 0.02;
 
     $(this.audio).on("timeupdate", () => {
       if(this.onTime) {

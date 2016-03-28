@@ -134,7 +134,7 @@ $(function() {
 	});
 
 	$(".controls .play").click(function() {
-		$(".playing .controls").removeClass("stop pause").addClass("play");
+		$(".playing .controls").removeClass("played stop pause").addClass("play");
 		MusicPlayer.Player.play();
 	});
 
@@ -157,8 +157,12 @@ $(function() {
 
 		$(".cover.current").removeClass("current").addClass("played");
 		$(".playing .controls").removeClass("stop pause").addClass("play");
+		$(".playing .song").html("song");
+		$(".playing .title").html(data.title);
+		$(".playing .artist").html(data.artist);
 
-		$(this).addClass("current");
+		$(this).removeClass("played").addClass("current");
+
 
 		MusicPlayer.Player.play(data);
 
@@ -175,34 +179,4 @@ $(function() {
 
 		MusicPlayer.Player.seek( pos/w );
 	});
-
-/*
-	setInterval(function() {
-
-		if('Playlist' in MusicPlayer && 'data' in MusicPlayer.Playlist && 'Status' in MusicPlayer && 'elapsed' in MusicPlayer.Status ) {
-			if(MusicPlayer.Status.state == "play") MusicPlayer.Status.elapsed += 1;
-
-			var index = $(".playlist .cover.current").attr("data-index");
-
-			if(MusicPlayer.Playlist.data[index].Time < MusicPlayer.Status.elapsed) {
-				MusicPlayer.Connection.send("noidle");
-				MusicPlayer.Connection.status();
-			} else {
-				var sec = parseInt(MusicPlayer.Status.elapsed);
-				var min = parseInt(sec/60);
-
-				$(".time .elapsed").html(formatTime(min, sec - min*60));
-			}
-
-			//update the timeline
-			var total = MusicPlayer.Playlist.data[index].Time;
-			var pos = parseFloat(MusicPlayer.Status.elapsed);
-			var percentage = parseFloat( (pos/total) * 100 );
-
-			$(".time .line .position").css({
-				left: "calc(" + percentage + "% - 2px)"
-			});
-		}
-
-	}, 1000);*/
 });
