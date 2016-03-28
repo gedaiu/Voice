@@ -1,6 +1,9 @@
 'use strict';
 
 const electron = require('electron');
+const fileList = require('./backend/fileList');
+const dialog = require('electron').dialog;
+
 // Module to control application life.
 const app = electron.app;
 // Module to create native browser window.
@@ -8,7 +11,10 @@ const BrowserWindow = electron.BrowserWindow;
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
-let mainWindow;
+let mainWindow = null;
+
+const ipcMain = require('electron').ipcMain;
+
 
 function createWindow () {
   // Create the browser window.
@@ -16,6 +22,14 @@ function createWindow () {
 
   // and load the index.html of the app.
   mainWindow.loadURL('file://' + __dirname + '/index.html');
+
+  ipcMain.on('asynchronous-message', function(event, arg) {
+    fileList.setLocalSource(dialog.showOpenDialog({ properties: [ 'openDirectory' ]})[0]);
+
+    fileList.get(function(err, list) {
+      mainWindow.webContents.executeJavaScript("fileList(" + JSON.stringify(list) + ")");
+    });
+  });
 
   // Open the DevTools.
   mainWindow.webContents.openDevTools();
@@ -26,6 +40,12 @@ function createWindow () {
     // in an array if your app supports multi windows, this is the time
     // when you should delete the corresponding element.
     mainWindow = null;
+  });
+
+  mainWindow.on('show', function() {
+    fileList.get(function(err, list) {
+      mainWindow.webContents.executeJavaScript("fileList(" + JSON.stringify(list) + ")");
+    });
   });
 }
 

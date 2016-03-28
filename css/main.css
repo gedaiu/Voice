@@ -413,20 +413,23 @@ Collection area
 
 .collection .collectionButton {
   position: absolute;
-  top: 10px;
-  left: -40px;
+  top: 0;
+  left: -48px;
 
   width: 32px;
   height: 32px;
+  padding: 8px;
 
   cursor: pointer;
 
   opacity: 0.4;
   transition: opacity ease-in 0.5s;
+  transition: background-color ease-in 0.5s;
 }
 
 .collection.open .collectionButton {
   opacity: 1;
+  background-color: #000;
 }
 
 .collection {
@@ -444,4 +447,79 @@ Collection area
 
 .collection.open {
   right: 0;
+}
+
+.collection .list {
+  color: #fff;
+
+  cursor: pointer;
+  padding: 10px 5px;
+  position: absolute;
+
+  left: 0;
+  right: 0;
+  top: 70px;
+  bottom: 0;
+
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.collection .list .item {
+  cursor: pointer;
+  white-space: nowrap;
+  padding: 10px 5px;
+  position: relative;
+}
+
+.collection .list .item span {
+  display: block;
+  font-size: 12px;
+}
+
+.collection .list .item .title {
+  font-weight: bold;
+}
+
+.collection .list .item .duration {
+  position: absolute;
+  right: 0;
+  top: 25px;
+}
+
+.collection .list .item:hover {
+  background-color: #333;
+}
+
+.collection .sources {
+  font-size: 12px;
+  text-align: right;
+  padding: 10px;
+}
+
+.collection .search {
+  padding: 10px 10px 0 10px;
+}
+
+.collection .search input {
+  color: #fff;
+  border: 1px solid #aaa;
+  width: calc(100% - 10px);
+  background: transparent;
+  padding: 5px;
+}
+
+.collection .search input:focus {
+  outline: none;
+  border: 1px solid #b3d4fc;
+}
+
+a {
+  cursor: pointer;
+  color: #eee;
+}
+
+a:hover {
+  text-decoration: underline;
+  color: #fff;
 }
