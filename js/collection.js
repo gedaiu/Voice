@@ -18,6 +18,12 @@ function fileList(list) {
   $(".collection .list").html("");
 
   list.forEach(function(fileData) {
-    $(".collection .list").append('<div class="item"><span class="title">' + fileData.title + '</span><span class="artist">by ' + fileData.artist + '</span><span class="duration">' + fileData.duration + '</span></div>');
+    var item = $('<div draggable="true" class="item"><span class="title">' + fileData.title + '</span><span class="artist">by ' + fileData.artist + '</span><span class="duration">' + fileData.duration + '</span></div>');
+    $(".collection .list").append(item);
+
+    item.on("dragstart", function(event) {
+      event.originalEvent.dataTransfer.setData("voiceItemData", JSON.stringify(fileData));
+      event.originalEvent.dataTransfer.setData("text", fileData.artist + " - " + fileData.title);
+    });
   });
 }

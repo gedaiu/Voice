@@ -1,6 +1,28 @@
 var MusicPlayer = MusicPlayer || {};
+var $ = require(__dirname+'/js/vendor/jquery-2.1.3.min.js');
+
+
+$(function() {
+  $(".mainView").on("drop", function(event) {
+    event.preventDefault();
+    var data = JSON.parse(event.originalEvent.dataTransfer.getData("voiceItemData"));
+
+    if(data) {
+      console.log(data);
+    }
+  })
+	.on("dragover", function(event) {
+		event.preventDefault();
+	});
+});
+
 
 MusicPlayer.Playlist = {};
+
+MusicPlayer.Playlist.add = function(data)
+{
+	MusicPlayer.Playlist.data.push(data);
+};
 
 MusicPlayer.Playlist.set = function(data)
 {
@@ -8,27 +30,27 @@ MusicPlayer.Playlist.set = function(data)
 	MusicPlayer.Playlist.data = data;
 
 	for(var i=0; i<data.length; i++) {
-		MusicPlayer.Connection.getcover(data[i].Artist, data[i].Title, data[i].Album, data[i].file);
+		MusicPlayer.Connection.getcover(data[i].artist, data[i].title, data[i].album, data[i].file);
 
 		if(MusicPlayer.Playlist.data.length <= i - 1 || MusicPlayer.Playlist.data[i].file != data[i].file) {
 			MusicPlayer.Playlist.data[i] = data[i];
 		}
 
 		if(MusicPlayer.Playlist.data[i].file != data[i].file) {
-			var elm = $(".playlist .item"+data[i].Pos);
+			var elm = $(".playlist .item"+data[i].pos);
 			elm.attr("class", "cover remove").removeAttr("id").removeAttr("data-index").removeAttr("data-id");
 		}
 
-		var element = $(".playlist .item"+data[i].Pos);
+		var element = $(".playlist .item"+data[i].pos);
 
-		if(element.length == 0) {
+		if(element.length === 0) {
 			var cls = "";
 			if(MusicPlayer.Status.song && i < parseInt(MusicPlayer.Status.song)) cls = "played";
 
 			var before = $(".playlist .item"+(data[i].Pos - 1));
-			element = $('<div class="cover new item'+data[i].Pos+' '+cls+'"><div class="pic"></div></div>');
+			element = $('<div class="cover new item' + data[i].Pos + ' ' + cls + '"><div class="pic"></div></div>');
 
-			if(before.length == 0) {
+			if(before.length === 0) {
 				$(".playlist").prepend(element);
 			} else {
 				before.before(element);
@@ -56,7 +78,7 @@ MusicPlayer.Playlist.set = function(data)
 	function addNewCover() {
 		var element = $(".playlist .cover.new.current:last, .playlist .cover.new:last");
 
-		if(element.length == 0) {
+		if(element.length === 0) {
 			clearInterval( MusicPlayer.Playlist.newTimeinterval );
 			return;
 		}
@@ -76,7 +98,7 @@ MusicPlayer.Playlist.set = function(data)
 
 	MusicPlayer.Graphics.Refresh();
 	MusicPlayer.Playlist.newTimeinterval = setInterval(addNewCover, intervalDelay);
-}
+};
 
 MusicPlayer.Playlist.setcover = function(file, cover)
 {
@@ -87,4 +109,4 @@ MusicPlayer.Playlist.setcover = function(file, cover)
 	}
 
 	MusicPlayer.Graphics.Refresh();
-}
+};
