@@ -1,13 +1,55 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="UTF-8">
-    <title>Hello World!</title>
-  </head>
-  <body>
-    <h1>Hello World!</h1>
-    We are using node <script>document.write(process.versions.node)</script>,
-    Chromium <script>document.write(process.versions.chrome)</script>,
-    and Electron <script>document.write(process.versions.electron)</script>.
-  </body>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title></title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="stylesheet" href="css/normalize.min.css">
+        <link rel="stylesheet" href="css/main.css">
+
+        <link href='http://fonts.googleapis.com/css?family=Exo+2:100&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+        <link href='http://fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet' type='text/css'>
+
+        <link rel="icon" type="image/png" href="favicon.ico" />
+    </head>
+    <body>
+        <div class="mainView">
+          <div class="playMode">
+              <img src="img/repeat.svg" class="repeat"/>
+              <img src="img/random.svg" class="random"/>
+          </div>
+
+          <div class="next label">Next</div>
+          <div class="before label">Previous</div>
+
+          <div class="playing">
+              <div class="song"></div>
+              <div class="title"></div>
+              <div class="artist"></div>
+              <div class="time"><span class="elapsed"></span><div class="line"><div class="timeline"></div><div class="position">/</div></div><span class="total"></span></div>
+
+              <div class="controls">
+                  <img src="img/play.svg" class="play"/>
+                  <img src="img/pause.svg" class="pause"/>
+              </div>
+          </div>
+
+          <div class="playlist"></div>
+        </div>
+
+        <div class="collection">
+          <div class="collectionButton">
+            <img src="img/collection.svg"/>
+          </div>
+
+        </div>
+
+        <script src="./js/collection.js"></script>
+    </body>
 </html>
