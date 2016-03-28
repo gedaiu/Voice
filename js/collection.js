@@ -9,7 +9,7 @@ $(function() {
   });
 
   $(".selectSources").click(function() {
-    ipcRenderer.send('asynchronous-message', "selectLocalSource");
+    ipcRenderer.send('asynchronous-message', JSON.stringify({ action: "selectLocalSource"}));
   });
 });
 

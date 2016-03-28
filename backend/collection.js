@@ -52,10 +52,13 @@ function expandMp3(file, callback) {
       }
 
       callback(null, {
+        type: "file",
+
         title: tags.title || "unknown",
         artist: tags.artist || "unknown",
         album: tags.album || "unknown",
         year: tags.year || "unknown",
+        cover: "Filastine--Looted.jpg",
         duration: "00:00",
 
         path: file
@@ -80,5 +83,9 @@ module.exports = {
       var mp3Files = _.filter(results, function(file) { return file.lastIndexOf(".mp3") === file.length - 4; });
       async.map(mp3Files, expandMp3, callback);
     });
+  },
+
+  play: function(song) {
+    console.log("play ", song);
   }
 };

@@ -227,6 +227,8 @@ body .playMode img.repeat {
 }
 
 .playing .controls {
+    z-index: 999999;
+
     width: 200px;
     height: 200px;
 

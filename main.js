@@ -1,7 +1,7 @@
 'use strict';
 
 const electron = require('electron');
-const fileList = require('./backend/fileList');
+const collection = require('./backend/collection');
 const dialog = require('electron').dialog;
 
 // Module to control application life.
@@ -24,11 +24,19 @@ function createWindow () {
   mainWindow.loadURL('file://' + __dirname + '/index.html');
 
   ipcMain.on('asynchronous-message', function(event, arg) {
-    fileList.setLocalSource(dialog.showOpenDialog({ properties: [ 'openDirectory' ]})[0]);
+    arg = JSON.parse(arg);
 
-    fileList.get(function(err, list) {
-      mainWindow.webContents.executeJavaScript("fileList(" + JSON.stringify(list) + ")");
-    });
+    if(arg.action === "selectLocalSource") {
+      collection.setLocalSource(dialog.showOpenDialog({ properties: [ 'openDirectory' ]})[0]);
+
+      collection.get(function(err, list) {
+        mainWindow.webContents.executeJavaScript("fileList(" + JSON.stringify(list) + ")");
+      });
+    }
+
+    if(arg.action === "play") {
+      collection.play(arg.data);
+    }
   });
 
   // Open the DevTools.
@@ -43,7 +51,7 @@ function createWindow () {
   });
 
   mainWindow.on('show', function() {
-    fileList.get(function(err, list) {
+    collection.get(function(err, list) {
       mainWindow.webContents.executeJavaScript("fileList(" + JSON.stringify(list) + ")");
     });
   });
