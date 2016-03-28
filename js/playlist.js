@@ -44,7 +44,9 @@ MusicPlayer.Playlist.updateElements = function() {
       //}
 
 			var before = $(".playlist .item" + (i - 1));
-			element = $('<div class="cover new item' + i + ' ' + cls + '"><div class="pic" style=\'background-image: url("./covers/' + this.data[i].cover + '")\'></div></div>');
+      var style = this.data[i].cover ? ' style=\'background-image: url("./covers/' + this.data[i].cover + '")\'' : "";
+
+			element = $('<div class="cover new item' + i + ' ' + cls + '"><div class="pic"' + style + '></div></div>');
       element.data("song", this.data[i]);
 
 			if(before.length === 0) {

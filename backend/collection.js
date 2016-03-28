@@ -1,6 +1,6 @@
 var fs = require('fs');
 var path = require('path');
-var id3 = require('id3js');
+var mm = require('musicmetadata');
 var async = require('async');
 var _ = require('lodash');
 
@@ -44,46 +44,37 @@ var walk = function(dir, done) {
 };
 
 function expandMp3(file, callback) {
-  try {
-    id3({ file: file, type: id3.OPEN_LOCAL }, function(err, tags) {
-      if(!tags) {
-        tags = {};
-      }
-
-      var result = {
+    var parser = mm( fs.createReadStream(file), function (err, result) {
+      var meta = {
         type: "file",
 
-        title: tags.title || "unknown",
-        artist: tags.artist || "unknown",
-        album: tags.album || "unknown",
-        year: tags.year || "unknown",
-        cover: "",
-        duration: "00:00",
+        title: result.title || "unknown",
+        artist: result.artist.join(" ") || "unknown",
+        album: result.album || "unknown",
+        year: result.year || "unknown",
+        duration: result.duration,
 
         path: file
       };
 
-      if(tags.v2.image) {
-        console.log(tags.v2.image.data);
+      if(result.picture && result.picture.length > 0) {
+        var format = result.picture[0].format;
+        var buffer = result.picture[0].data;
+        var filename = meta.artist + "-" + meta.title + "." + format;
+        filename = filename.replace(/(["\s'$`\\\/])/g, "_");
 
-        var buffer = tags.v2.image.data;
-        var filename = tags.title + "-" + tags.artist + ".jpg";
-
-        fs.writeFile("./cover/" + filename, tags.v2.image, function(err) {
-            if(err) {
-                callback(null, result);
-            } else {
-                result.cover = filename;
-                callback(null, result);
-            }
+        fs.access("covers/" + filename, fs.R_OK | fs.W_OK, function(err) {
+          console.log(filename, err);
+          if(err) {
+            fs.writeFile("covers/" + filename, buffer);
+          }
         });
-      } else {
-        callback(null, result);
-      }
-    });
-  } catch(err) {
 
-  }
+        meta.cover = filename;
+      }
+
+      callback(null, meta);
+    });
 }
 
 module.exports = {
