@@ -43,53 +43,30 @@ var walk = function(dir, done) {
   });
 };
 
-function expandMp3(file, callback) {
-    var parser = mm( fs.createReadStream(file), function (err, result) {
-      var meta = {
-        type: "file",
-
-        title: result.title || "unknown",
-        artist: result.artist.join(" ") || "unknown",
-        album: result.album || "unknown",
-        year: result.year || "unknown",
-        duration: result.duration,
-
-        path: file
-      };
-
-      if(result.picture && result.picture.length > 0) {
-        var format = result.picture[0].format;
-        var buffer = result.picture[0].data;
-        var filename = meta.artist + "-" + meta.title + "." + format;
-        filename = filename.replace(/(["\s'$`\\\/])/g, "_");
-
-        fs.access("covers/" + filename, fs.R_OK | fs.W_OK, function(err) {
-          console.log(filename, err);
-          if(err) {
-            fs.writeFile("covers/" + filename, buffer);
-          }
-        });
-
-        meta.cover = filename;
-      }
-
-      callback(null, meta);
-    });
-}
+var plugins = [];
 
 module.exports = {
+  init: function() {
+    var path = __dirname + "/collections";
+
+    fs.readdir(path, function(err, list) {
+      var jsFiles = _.filter(list, function(file) { return file.lastIndexOf(".js") === file.length - 3; });
+
+      jsFiles.forEach(function(file) {
+        plugins.push(require(path + "/" + file));
+      });
+    });
+  },
+
   setLocalSource: function(location) {
-    source = location;
+    plugins.forEach(function(plugin) {
+      plugin.setLocalSource(location);
+    });
   },
 
   get: function(callback) {
-    if(!source) {
-      return callback(null, []);
-    }
-
-    walk(source, function(err, results) {
-      var mp3Files = _.filter(results, function(file) { return file.lastIndexOf(".mp3") === file.length - 4; });
-      async.map(mp3Files, expandMp3, callback);
+    plugins.forEach(function(plugin) {
+      plugin.get(callback);
     });
   },
 

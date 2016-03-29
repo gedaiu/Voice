@@ -16,6 +16,8 @@ let mainWindow = null;
 const ipcMain = require('electron').ipcMain;
 
 
+collection.init();
+
 function createWindow () {
   // Create the browser window.
   mainWindow = new BrowserWindow({width: 800, height: 600});
@@ -29,8 +31,10 @@ function createWindow () {
     if(arg.action === "selectLocalSource") {
       collection.setLocalSource(dialog.showOpenDialog({ properties: [ 'openDirectory' ]})[0]);
 
-      collection.get(function(err, list) {
-        mainWindow.webContents.executeJavaScript("fileList(" + JSON.stringify(list) + ")");
+      mainWindow.webContents.executeJavaScript("fileClear()");
+
+      collection.get(function(err, item) {
+        mainWindow.webContents.executeJavaScript("fileItem(" + JSON.stringify(item) + ")");
       });
     }
 
@@ -51,9 +55,9 @@ function createWindow () {
   });
 
   mainWindow.on('show', function() {
-    collection.get(function(err, list) {
-      mainWindow.webContents.executeJavaScript("fileList(" + JSON.stringify(list) + ")");
-    });
+    //collection.get(function(err, list) {
+    //  mainWindow.webContents.executeJavaScript("fileList(" + JSON.stringify(list) + ")");
+    //});
   });
 }
 

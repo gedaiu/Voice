@@ -14,10 +14,11 @@ $(function() {
 });
 
 
-function fileList(list) {
+function fileClear(list) {
   $(".collection .list").html("");
+}
 
-  list.forEach(function(fileData) {
+function fileItem(fileData) {
     var item = $('<div draggable="true" class="item"><span class="title">' + fileData.title + '</span><span class="artist">by ' + fileData.artist + '</span><span class="duration">' + fileData.duration + '</span></div>');
     $(".collection .list").append(item);
 
@@ -25,5 +26,4 @@ function fileList(list) {
       event.originalEvent.dataTransfer.setData("voiceItemData", JSON.stringify(fileData));
       event.originalEvent.dataTransfer.setData("text", fileData.artist + " - " + fileData.title);
     });
-  });
 }
