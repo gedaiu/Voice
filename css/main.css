@@ -422,12 +422,12 @@ Collection area
 
 .collection.open .collectionButton {
   opacity: 1;
-  background-color: rgba(0,0,0,0.8);
+  background-color: rgba(0,0,0,0.9);
 }
 
 .collection {
   position: fixed;
-  background-color: rgba(0,0,0,0.8);
+  background-color: rgba(255,255,255,0.9);
 
   top: 0;
   right: -300px;
@@ -443,7 +443,7 @@ Collection area
 }
 
 .collection .list {
-  color: #fff;
+  color: #333;
 
   cursor: pointer;
   padding: 10px 5px;
@@ -463,25 +463,30 @@ Collection area
   white-space: nowrap;
   padding: 10px 5px;
   position: relative;
+  overflow: hidden;
 }
 
 .collection .list .item span {
   display: block;
   font-size: 12px;
+  text-shadow: 1px 1px 2px rgba(20, 20, 20, 0.2);
 }
 
 .collection .list .item .title {
   font-weight: bold;
+  overflow: hidden;
+  width: 230px;
 }
 
 .collection .list .item .duration {
   position: absolute;
-  right: 0;
-  top: 25px;
+  right: 5px;
+  top: 10px;
 }
 
 .collection .list .item:hover {
-  background-color: #333;
+  background-color: #000;
+  color: #fff;
 }
 
 .collection .sources {
@@ -496,7 +501,7 @@ Collection area
 
 .collection .search input {
   color: #fff;
-  border: 1px solid #aaa;
+  border: 1px solid #fff;
   width: calc(100% - 10px);
   background: transparent;
   padding: 5px;
@@ -507,12 +512,18 @@ Collection area
   border: 1px solid #b3d4fc;
 }
 
-a {
-  cursor: pointer;
-  color: #eee;
+.collection h2 {
+  font-size: 16px;
+  margin: 10px 0 0 4px;
+  padding: 0;
+  color: #555;
 }
 
-a:hover {
+.collection a {
+  cursor: pointer;
+  color: #333;
+}
+
+.collection a:hover {
   text-decoration: underline;
-  color: #fff;
 }

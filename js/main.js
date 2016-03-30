@@ -83,7 +83,7 @@ MusicPlayer.Graphics.Refresh = function()
 		left: ( w/2 - 200 ) / 2
 	});
 
-	var list = $($(".playlist .cover").get().reverse());
+	var list = $($(".mainView .playlist .cover").get().reverse());
 
 	list.each(function() {
 		$(this).removeClass("new");
@@ -101,18 +101,17 @@ function formatTime(m, s) {
 	var result;
 
 	if(m <= 9) {
-		m = "0" + (m+"");
+		m = "0" + (m + "");
 	}
 
 	if(s <= 9) {
-		s = "0" + (s+"");
+		s = "0" + (s + "");
 	}
 
 	return m + ":" + s;
 }
 
 $(function() {
-
 	MusicPlayer.Player.onTime = function(time, duration) {
 		$(".time .elapsed").html(niceTime(time));
 		$(".time .total").html(niceTime(duration));
@@ -122,6 +121,26 @@ $(function() {
 		$(".time .line .position").css({
 			left: "calc(" + percentage + "% - 2px)"
 		});
+	};
+
+	MusicPlayer.Player.onEnd = function() {
+		if($("body").is(".random")) {
+			var index = parseInt(Math.random() * $(".mainView .playlist .cover").length);
+			$("#song" + index).click();
+
+			return;
+		}
+
+		var nextIndex = parseInt($(".mainView .playlist .cover.current").attr("data-index")) + 1;
+
+		var next = $(".mainView .playlist .cover:not(.played, .current):last");
+
+		if(next.length === 0 && $("body").is(".repeat")) {
+			$(".mainView .playlist .cover").removeClass("played");
+			next = $("#song0");
+		}
+
+		next.click();
 	};
 
 	$(window).resize(function() {
@@ -152,7 +171,7 @@ $(function() {
 		$("body").removeClass("random").toggleClass("repeat");
 	});
 
-	$(".playlist").on("click", ".cover", function() {
+	$(".mainView .playlist").on("click", ".cover", function() {
 		var data = $(this).data("song");
 
 		$(".cover.current").removeClass("current").addClass("played");
@@ -162,7 +181,6 @@ $(function() {
 		$(".playing .artist").html(data.artist);
 
 		$(this).removeClass("played").addClass("current");
-
 
 		MusicPlayer.Player.play(data);
 

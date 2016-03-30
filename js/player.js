@@ -10,15 +10,45 @@ MusicPlayer.Player.play = function(data) {
     this.audio.pause();
   }
 
-  if(data && data.path) {
-    this.audio = new Audio(data.path);
-    this.audio.volume = 0.02;
+  if(data && (data.path || data.url)) {
+    var path = data.path || data.url;
 
-    $(this.audio).on("timeupdate", () => {
-      if(this.onTime) {
-        this.onTime(this.audio.currentTime, this.audio.duration);
-      }
-    });
+    if(!this.audio || this.audio.currentSrc != path) {
+      this.audio = new Audio(path);
+
+      $(this.audio).on("timeupdate", () => {
+        if(this.onTime) {
+          var currentTime = this.audio.currentTime;
+          var duration = this.audio.duration;
+
+          if(this.audio.dataPosition) {
+            currentTime -= this.audio.dataPosition;
+          }
+
+          if(this.audio.dataDuration) {
+            duration = this.audio.dataDuration;
+          }
+
+          this.onTime(currentTime, duration);
+
+          if(currentTime >= duration) {
+            this.audio.pause();
+            this.onEnd();
+          }
+        }
+      });
+    }
+
+    if(data.position) {
+      this.audio.currentTime = data.position;
+      this.audio.dataPosition = data.position;
+    } else {
+      this.audio.currentTime = 0;
+    }
+
+    if(data.duration) {
+      this.audio.dataDuration = data.duration;
+    }
   }
 
   this.audio.play();
@@ -39,6 +69,13 @@ MusicPlayer.Player.stop = function(data) {
 
 MusicPlayer.Player.seek = function(percent) {
   if(this.audio) {
-    this.audio.currentTime = this.audio.duration * percent;
+    var duration = this.audio.dataDuration ? this.audio.dataDuration : this.audio.duration;
+    var currentTime = duration * percent;
+
+    if(this.audio.dataPosition) {
+      currentTime += this.audio.dataPosition;
+    }
+
+    this.audio.currentTime = currentTime;
   }
 };
