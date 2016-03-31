@@ -6,13 +6,19 @@ $(function() {
     event.preventDefault();
     var data = JSON.parse(event.originalEvent.dataTransfer.getData("voiceItemData"));
 
-    if(data && (data.type === "file" || data.type === "remote")) {
+    console.log(data);
+
+    if(typeof data === "string") {
       MusicPlayer.Playlist.add(data);
     }
 
-    if(data && data.type === "playlist") {
-      MusicPlayer.Playlist.set(data.list);
+    if(typeof data === "object") {
+      data.forEach(function(item) {
+        MusicPlayer.Playlist.add(item);
+      });
     }
+
+    MusicPlayer.Playlist.updateElements();
   })
 	.on("dragover", function(event) {
 		event.preventDefault();
@@ -23,9 +29,23 @@ MusicPlayer.Playlist = {
   data: []
 };
 
-MusicPlayer.Playlist.add = function(data)
+MusicPlayer.Playlist.add = function(id)
 {
-	this.data.push(data);
+  var added = false;
+
+  if(this.data && this.data.forEach) {
+    this.data.forEach((item, i) => {
+      if(id === item) {
+        added = true;
+        this.data[i] = id;
+      }
+    });
+  }
+
+  if(!added) {
+    this.data.push(id);
+  }
+
 	MusicPlayer.Playlist.updateElements();
 };
 
@@ -43,15 +63,18 @@ MusicPlayer.Playlist.set = function(data)
 
 MusicPlayer.Playlist.updateElements = function() {
 	for(var i=0; i<this.data.length; i++) {
+    var item = MusicPlayer.Collection.data[this.data[i]];
+
+    console.log(i, this.data[i], item);
 
 		var element = $(".mainView .playlist .item" + i);
 
 		if(element.length === 0) {
 			var before = $(".mainView .playlist .item" + (i - 1));
-      var style = this.data[i].cover ? ' style=\'background-image: url("./covers/' + this.data[i].cover + '")\'' : "";
+      var style = item.cover ? ' style=\'background-image: url("' + item.cover + '")\'' : "";
 
 			element = $('<div class="cover new item' + i + '"><div class="pic"' + style + '></div></div>');
-      element.data("song", this.data[i]);
+      element.data("song", item);
 
 			if(before.length === 0) {
 				$(".mainView .playlist").prepend(element);
@@ -73,30 +96,6 @@ MusicPlayer.Playlist.updateElements = function() {
 				   .attr("class", "cover remove").removeAttr("id").removeAttr("data-index").removeAttr("data-id");
 		}
 	});
-
-	var nextIntervalAt = this.data.length / 4;
-	var intervalDelay = 20;
-
-	function addNewCover() {
-		var element = $(".mainView .playlist .cover.new.current:last, .mainView .playlist .cover.new:last");
-
-		if(element.length === 0) {
-			clearInterval( MusicPlayer.Playlist.newTimeinterval );
-			return;
-		}
-		else {
-			$(element[0]).removeClass("new");
-		}
-
-		if( $(".mainView .playlist .cover.new").length <= nextIntervalAt) {
-			clearInterval( MusicPlayer.Playlist.newTimeinterval );
-
-			intervalDelay += parseInt(intervalDelay/8);
-			nextIntervalAt -= parseInt(nextIntervalAt / 4);
-
-			MusicPlayer.Playlist.newTimeinterval = setInterval(addNewCover, intervalDelay);
-		}
-	}
 
 	MusicPlayer.Graphics.Refresh();
 };

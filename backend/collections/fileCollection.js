@@ -47,6 +47,7 @@ function expandMp3(file, callback) {
     var parser = mm( fs.createReadStream(file), function (err, result) {
       var meta = {
         type: "file",
+        id: file,
 
         title: result.title || "unknown",
         artist: result.artist.join(" ") || "unknown",
@@ -69,7 +70,7 @@ function expandMp3(file, callback) {
           }
         });
 
-        meta.cover = filename;
+        meta.cover = "./covers/" + filename;
       }
 
       callback(null, meta);

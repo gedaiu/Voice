@@ -31,10 +31,10 @@ function createWindow () {
     if(arg.action === "selectLocalSource") {
       collection.setLocalSource(dialog.showOpenDialog({ properties: [ 'openDirectory' ]})[0]);
 
-      mainWindow.webContents.executeJavaScript("fileClear()");
+      mainWindow.webContents.executeJavaScript("MusicPlayer.Collection.fileClear()");
 
       collection.get(function(err, item) {
-        mainWindow.webContents.executeJavaScript("fileItem(" + JSON.stringify(item) + ")");
+        mainWindow.webContents.executeJavaScript("MusicPlayer.Collection.fileItem(" + JSON.stringify(item) + ")");
       });
     }
 

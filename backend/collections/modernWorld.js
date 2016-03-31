@@ -9,6 +9,7 @@ var htmlparser = require("htmlparser2");
 
 function decodeShow(showId, title, file, callback) {
   var list = [];
+  var ids = [];
   var lastTag = "";
   var duration = 0;
   var oldStart = 0;
@@ -18,8 +19,12 @@ function decodeShow(showId, title, file, callback) {
       var parser = new htmlparser.Parser({
         onopentag: function(name, attribs) {
           if(name === "segment") {
+            ids.push("wfmu-" + showId + "-" + oldStart);
+
             list.push({
               type: "remote",
+              id: "wfmu-" + showId + "-" + oldStart,
+
               url: file,
 
               title: "unknown",
@@ -59,7 +64,7 @@ function decodeShow(showId, title, file, callback) {
       parser.write(body);
       parser.end();
 
-      callback(null, {type: "playlist", author: "WFMU This is the modern world", title: title, list: list });
+      callback(null, {id: "wfmu-" + showId, type: "playlist", author: "WFMU This is the modern world", title: title, list: ids }, list);
     }
   });
 }
@@ -101,10 +106,10 @@ module.exports = {
 
             if(name === "a" && attribs.href && attribs.href.indexOf("/listen.m3u?show=" + lastShowId + "&") === 0) {
               getAudioFromM3u(lastShowId, lastTitle, attribs.href, function(lastShowId, lastTitle, url) {
-                decodeShow(lastShowId, lastTitle, url, function(err, playlist) {
+                decodeShow(lastShowId, lastTitle, url, function(err, playlist, list) {
                   callback(null, playlist);
 
-                  playlist.list.forEach(function(file) {
+                  list.forEach(function(file) {
                     callback(null, file);
                   });
                 });

@@ -1,5 +1,12 @@
+var MusicPlayer = MusicPlayer || {};
+
 var $ = require(__dirname+'/js/vendor/jquery-2.1.3.min.js');
 const ipcRenderer = require('electron').ipcRenderer;
+
+MusicPlayer.Collection = {
+  data: []
+};
+
 
 $(function() {
   $(".collectionButton").click(function() {
@@ -12,45 +19,44 @@ $(function() {
   });
 });
 
-function fileClear(list) {
+MusicPlayer.Collection.fileClear = function(list) {
+  MusicPlayer.Collection.data = [];
+
   $(".collection .list .group").hide();
   $(".collection .list .group .items").html("");
-}
+};
 
-function fileItem(fileData) {
-    var item = null;
-    var duration = "";
+MusicPlayer.Collection.getElement = function(id, type) {
+  var item = $(".collection .list .item[data-id='" + id + "']");
 
-    if(fileData.type === "playlist") {
-      var artist = fileData.author ? fileData.author + ": " : "";
-      item = $('<div draggable="true" class="item"><span class="title">' + fileData.title + '</span><span class="artist">' + artist + fileData.list.length + ' songs</span></div>');
+  if(item.length === 0) {
+    var template = '<span class="title"></span><span class="artist"></span><span class="duration"></span><span class="info"></span>';
+    item = $('<div draggable="true" class="item" data-id="' + id + '">' + template + '</div>');
 
-      $(".collection .list .group[data-type='playlist']").show();
-      $(".collection .list .group[data-type='playlist'] .items").append(item);
-    }
+    $(".collection .list .group[data-type='" + type + "']").show().append(item);
+  }
 
-    if(fileData.type === "remote") {
-      duration = fileData.duration && fileData.duration ? niceTime(fileData.duration) : "";
+  return item;
+};
 
-      item = $('<div draggable="true" class="item"><span class="title">' + fileData.title + '</span><span class="artist">by ' + fileData.artist + '</span><span class="duration">' + duration + '</span></div>');
+MusicPlayer.Collection.addCollectionItem = function(fileData) {
+  var element = this.getElement(fileData.id, fileData.type);
+  var duration = fileData.duration && fileData.duration ? niceTime(fileData.duration) : "";
 
-      $(".collection .list .group[data-type='remote']").show();
-      $(".collection .list .group[data-type='remote'] .items").append(item);
-    }
+  element.find(".title").html(fileData.title);
+  element.find(".artist").html(fileData.artist);
+  element.find(".duration").html(fileData.duration);
+  element.find(".info").html(fileData.info);
 
-    if(fileData.type === "file") {
-      duration = fileData.duration && fileData.duration ? niceTime(fileData.duration) : "";
+  element.off("dragstart");
+  element.on("dragstart", function(event) {
+    event.originalEvent.dataTransfer.setData("voiceItemData", JSON.stringify(fileData.list || fileData.id));
+  });
 
-      item = $('<div draggable="true" class="item"><span class="title">' + fileData.title + '</span><span class="artist">by ' + fileData.artist + '</span><span class="duration">' + duration + '</span></div>');
+  return element;
+};
 
-      $(".collection .list .group[data-type='file']").show();
-      $(".collection .list .group[data-type='file'] .items").append(item);
-    }
-
-    if(item) {
-      item.on("dragstart", function(event) {
-        event.originalEvent.dataTransfer.setData("voiceItemData", JSON.stringify(fileData));
-        event.originalEvent.dataTransfer.setData("text", fileData.artist + " - " + fileData.title);
-      });
-    }
-}
+MusicPlayer.Collection.fileItem = function(fileData) {
+    MusicPlayer.Collection.data[fileData.id] = fileData;
+    this.addCollectionItem(fileData);
+};
